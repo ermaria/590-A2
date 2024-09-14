@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="myCanvas" width="600" height="400" style="border:1px solid #000;"></canvas>
+<script> "use strict"
+    var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
+
+
+    var startPoint = {x: 25, y: 300};
+    var controlPoint = {x: 300, y: 50};
+    var endPoint = {x: 575, y: 300};
+    
+    var radius = 17;  // Radius of the circle
+    var numTriangles = 6;  // Number of triangles around the circle
+    var rotationAngle = 0;
+
+    function getQuadraticCurvePoint(t, start, control, end) {
+        var x = Math.pow(1 - t, 2) * start.x + 2 * (1 - t) * t * control.x + Math.pow(t, 2) * end.x;
+        var y = Math.pow(1 - t, 2) * start.y + 2 * (1 - t) * t * control.y + Math.pow(t, 2) * end.y;
+        return {x: x, y: y};
+    }
+
+    function drawTriangle(context, x, y, size, angle) {
+        context.beginPath();
+        context.moveTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
+        context.lineTo(x + size * Math.cos(angle + (2 * Math.PI / 3)), y + size * Math.sin(angle + (2 * Math.PI / 3)));
+        context.lineTo(x + size * Math.cos(angle + (4 * Math.PI / 3)), y + size * Math.sin(angle + (4 * Math.PI / 3)));
+        context.closePath();
+        context.fillStyle = '#ffd138';
+        context.fill();
+    }
+  
+  
+    var t = 0;
+    function animate() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+
+        context.globalCompositeOperation = 'destination-under'
+        
+        
+
+
+        var position = getQuadraticCurvePoint(t, startPoint, controlPoint, endPoint);
+      
+      if(position.x <= 100){
+        
+        context.fillStyle = "#738499";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      if(position.x > 100 && position.x <=400){
+        
+        context.fillStyle = "#54a1ff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      if(position.x > 400 && position.x <=450){
+        
+        context.fillStyle = "#323a80";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      if(position.x > 450){
+        
+        context.fillStyle = "#170502";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      
+        context.beginPath();
+      
+        context.save();
+        context.translate(position.x, position.y);
+          context.arc(0, 0, radius, 0, 2 * Math.PI);
+        //context.arc(position.x, position.y, radius, 0, 2 * Math.PI);
+        context.fillStyle = '#ffd138';
+      
+        context.fill();
+      context.restore();
+      
+      context.beginPath();
+		context.rect(0,350,600,50);
+        context.fillStyle = "#7eb877";
+		context.fill();
+      
+      
+         context.save();
+           context.translate(position.x, position.y);
+
+         for (let i = 0; i < numTriangles; i++) {
+            // Calculate the angle for each triangle, adding the rotationAngle for animation
+            var angle = (i * 2 * Math.PI) / numTriangles + rotationAngle;
+      
+            var triangleX = 0 + (radius + 10) * Math.cos(angle);
+            var triangleY = 0 + (radius + 10) * Math.sin(angle);
+            drawTriangle(context, triangleX, triangleY, 8, angle);
+          
+        }
+       context.restore();
+
+        
+        t += 0.01;
+        if (t > 1) t = 0; // Reset 't' to loop the animation
+
+        // Increment rotationAngle to rotate the triangles
+        rotationAngle += 0.05;
+     
+     
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+</script>
+<head>
+  <meta name="description" content="COMP 590 Assignment 2">
+  <meta charset="utf-8">
+  <title>Canvas Drawing Example</title>
+</head>
+</body>
+</html>
